@@ -1,0 +1,43 @@
+#!/usr/bin/sh
+
+# This script configures the Linux-GPIB driver for Agilent 82357A/B and National
+# Instruments GPIB-USB adapters. It is intended to be called from a systemd unit
+# file.
+
+usage() {
+    echo "Usage: $0 <sysfs path>"
+    echo -ne "Configure Linux GPIB driver for Agilent 82357A/B and NI "
+    echo "adapters at <sysfs path>."
+}
+
+case $1 in
+    -h|--help)
+        usage
+        exit 0
+        ;;
+    ?*)
+
+        # Since we can only realistically pass one argument into the systemd
+        # unit file, we can get the environment variables defined in the udev
+        # rules from udevadm, See:
+        # https://superuser.com/questions/924683/passing-udev-environment-variables-to-systemd-service-execution
+        eval $(udevadm info --query=env --export $1)
+
+        if [[ "${ID_GPIB_MINOR}" != "" ]]; then
+          OPT_MINOR="--minor ${ID_GPIB_MINOR}"
+        fi
+        if [[ "${ID_GPIB_BOARD_TYPE}" != "" ]]; then
+          OPT_BOARD_TYPE="--board-type ${ID_GPIB_BOARD_TYPE}"
+        fi
+        ARGS="${GPIB_CONFIG_OPTIONS} --sysfs-device-path ${DEVPATH} ${OPT_MINOR} ${OPT_BOARD_TYPE}"
+
+        MESSAGE="gpib_config $ARGS (S/N:  $SERIAL)"
+        echo "${MESSAGE}" | systemd-cat -t gpib-config-systemd -p info
+
+        gpib_config ${ARGS}
+        ;;
+    *)
+        usage
+        exit 1
+esac
+
