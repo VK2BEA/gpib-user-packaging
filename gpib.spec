@@ -33,6 +33,7 @@ Summary:        Linux GPIB (IEEE-488) userspace library and programs
 License:        GPLv2+
 URL:            http://linux-gpib.sourceforge.net/
 
+Obsoletes: linux-%{name} <= %{version}
 %global upstream_name linux-%{name}
 
 # The source for this package was pulled from upstream's vcs. Use the
@@ -79,6 +80,7 @@ BuildRequires:  docbook5-schemas
 %{?systemd_requires}
 BuildRequires:  systemd
 
+
 %description
 The Linux GPIB package provides support for GPIB (IEEE-488) hardware.
 This packages contains the userspace libraries and programs.
@@ -88,6 +90,8 @@ This packages contains the userspace libraries and programs.
 Summary:        Development files for %{name}
 
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+
+Obsoletes: linux-%{name}-devel <= %{version}
 
 %description devel
 Development files for %{name}.
@@ -99,6 +103,8 @@ Summary:        Guile %{name} module
 Requires:       compat-guile18%{?_isa}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildRequires:  compat-guile18-devel
+
+Obsoletes: guile18-linux-%{name} <= %{version}
 
 %description -n guile18-%{name}
 Guile bindings for %{name}.
@@ -113,7 +119,8 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 Requires:       php(zend-abi) = %{php_zend_api}
 Requires:       php(api) = %{php_core_api}
 BuildRequires:  php-devel
-# BuildRequires:  php-laminas-zendframework-bridge
+
+Obsoletes: php-linux-%{name} <= %{version}
 
 %description -n php-%{name}
 PHP bindings for %{name}.
@@ -142,6 +149,8 @@ Summary:        Python 3 %{name} module
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildRequires:  python%{python3_pkgversion}-devel
 
+Obsoletes: python%{python3_pkgversion}-linux-%{name} <= %{version}
+
 %description -n python%{python3_pkgversion}-%{name}
 Python 3 bindings for %{name}.
 %endif
@@ -155,6 +164,8 @@ Requires:       tcl(abi) = %{tcl_version}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildRequires:  tcl-devel
 
+Obsoletes: tcl-linux-%{name} <= %{version}
+
 %description -n tcl-%{name}
 TCL bindings for %{name}.
 %endif
@@ -166,6 +177,8 @@ Summary:        Documentation for %{name} library
 
 BuildArch:      noarch
 Requires:       %{name} = %{version}-%{release}
+
+Obsoletes: linux-%{name}-doc <= %{version}
 
 %description doc
 HTML and PDF documentation for %{name}.
