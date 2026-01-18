@@ -369,7 +369,7 @@ fi
 %files
 %defattr(644,root,root,755)
 
-%license %{upstream_name}-user/COPYING
+%license GPL-2.0-only
 %doc %{upstream_name}-user/README
 
 %attr(755,root,root) %{_bindir}/ibterm
@@ -393,8 +393,8 @@ fi
 %files devel
 %defattr(644,root,root,755)
 
+%license GPL-2.0-only
 %doc %{upstream_name}-user/README
-%license %{upstream_name}-user/COPYING
 
 %dir %{_includedir}/gpib
 
@@ -416,8 +416,8 @@ fi
 %files -n guile18-%{name}
 %defattr(644,root,root,755)
 
+%license GPL-2.0-only
 %doc %{upstream_name}-user/language/guile/README
-%license %{upstream_name}-user/COPYING
 
 %{_libdir}/*-guile*.so
 %{guile_site}/*.scm
@@ -428,7 +428,7 @@ fi
 %files -n php-%{name}
 %defattr(644,root,root,755)
 
-%license %{upstream_name}-user/COPYING
+%license GPL-2.0-only
 
 %{php_extdir}/*.so
 %endif
@@ -438,8 +438,8 @@ fi
 %files -n python%{python3_pkgversion}-%{name}
 %defattr(644,root,root,755)
 
+%license GPL-2.0-only
 %doc %{upstream_name}-user/language/python/README
-%license %{upstream_name}-user/COPYING
 
 %{python3_sitearch}/*
 %endif
@@ -449,8 +449,8 @@ fi
 %files -n perl-%{perlname}
 %defattr(644,root,root,755)
 
+%license GPL-2.0-only
 %doc %{upstream_name}-user/language/perl/README
-%license %{upstream_name}-user/COPYING
 
 %dir %{perl_vendorarch}/auto/%{perlname}
 
@@ -466,8 +466,8 @@ fi
 %files -n tcl-%{name}
 %defattr(644,root,root,755)
 
+%license GPL-2.0-only
 %doc %{upstream_name}-user/language/tcl/README
-%license %{upstream_name}-user/COPYING
 
 %{tcl_sitearch}/%{name}
 
@@ -479,7 +479,7 @@ fi
 %files doc
 %defattr(644,root,root,755)
 
-%license %{upstream_name}-user/doc/fdl.xml
+%license GPL-2.0-only
 
 %{_docdir}/%{name}
 %endif
