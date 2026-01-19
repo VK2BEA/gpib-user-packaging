@@ -30,7 +30,7 @@ Version:        4.3.7
 Release:        1%{?dist}
 Summary:        Linux GPIB (IEEE-488) userspace library and programs
 
-License:        GPLv2+
+License:        GPL-2.0-or-later
 URL:            http://linux-gpib.sourceforge.net/
 
 Obsoletes: linux-%{name} <= %{version}

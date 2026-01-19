@@ -8,5 +8,5 @@ Requires=%i.device
 Type=oneshot
 RemainAfterExit=no
 TimeoutSec=30
-ExecStart=@libexecdir@/linux-gpib-config-systemd %f
+ExecStart=@libexecdir@/gpib-config-systemd %f
 
