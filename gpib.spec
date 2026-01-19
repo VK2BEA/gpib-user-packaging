@@ -27,7 +27,7 @@
 
 Name:           gpib
 Version:        4.3.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Linux GPIB (IEEE-488) userspace library and programs
 
 License:        GPL-2.0-or-later
