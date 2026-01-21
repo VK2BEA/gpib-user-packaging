@@ -7,8 +7,8 @@
 %bcond_without tcl
 
 # https://sourceforge.net/p/linux-gpib/git/ci/eeb0307df9e2b53b17e488bac720e5139040b453/tree/
-%global gitrev eeb0307df9e2b53b17e488bac720e5139040b453
-%global gitdate 20260111
+%global gitrev e6e13a0f349a3298ee2f689da969efd6e39f96c3
+%global gitdate 20260121
 
 %global _hardened_build 1
 
@@ -27,7 +27,7 @@
 
 Name:           gpib
 Version:        4.3.7
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Linux GPIB (IEEE-488) userspace library and programs
 
 License:        GPL-2.0-or-later
@@ -486,6 +486,8 @@ fi
 
 
 %changelog
+* Wed Jan 21 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
+- e6e13a0f349a3298ee2f689da969efd6e39f96c3 - INES PCI support
 * Sun Jan 11 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
 - Initial release
 
