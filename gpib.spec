@@ -7,8 +7,8 @@
 %bcond_without tcl
 
 # https://sourceforge.net/p/linux-gpib/git/ci/eeb0307df9e2b53b17e488bac720e5139040b453/tree/
-%global gitrev 2ed668f7fb87b9498a6515230c95284eaef5756b
-%global gitdate 20260206
+%global gitrev 1710744d4d3eb7714d235bda35d63c9fc7d2f58e
+%global gitdate 20260306
 
 %global _hardened_build 1
 
@@ -27,7 +27,7 @@
 
 Name:           gpib
 Version:        4.3.7
-Release:        105%{?dist}
+Release:        106%{?dist}
 Summary:        Linux GPIB (IEEE-488) userspace library and programs
 
 License:        GPL-2.0-or-later
@@ -76,6 +76,7 @@ BuildRequires:  texlive-dvips
 BuildRequires:  texlive-metafont
 BuildRequires:  texlive-wasy
 BuildRequires:  docbook5-schemas
+BuildRequires:  docbook-utils
 
 %{?systemd_requires}
 BuildRequires:  systemd
@@ -487,6 +488,8 @@ fi
 
 
 %changelog
+* Fri Mar 06 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
+- 1710744d4d3eb7714d235bda35d63c9fc7d2f58e
 * Fri Feb 06 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
 - 2ed668f7fb87b9498a6515230c95284eaef5756b
 * Thu Jan 29 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
