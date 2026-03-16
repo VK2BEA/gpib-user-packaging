@@ -7,8 +7,8 @@
 %bcond_without tcl
 
 # https://sourceforge.net/p/linux-gpib/git/ci/eeb0307df9e2b53b17e488bac720e5139040b453/tree/
-%global gitrev 1710744d4d3eb7714d235bda35d63c9fc7d2f58e
-%global gitdate 20260306
+%global gitrev 8280576f08fe27e83e3e34a68d6cdb67882b9f94
+%global gitdate 20260316
 
 %global _hardened_build 1
 
@@ -27,7 +27,7 @@
 
 Name:           gpib
 Version:        4.3.7
-Release:        106%{?dist}
+Release:        107%{?dist}
 Summary:        Linux GPIB (IEEE-488) userspace library and programs
 
 License:        GPL-2.0-or-later
@@ -117,8 +117,6 @@ Guile bindings for %{name}.
 Summary:        PHP %{name} module
 
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-Requires:       php(zend-abi) = %{php_zend_api}
-Requires:       php(api) = %{php_core_api}
 BuildRequires:  php-devel
 
 Obsoletes: php-linux-%{name} <= %{version}
@@ -135,7 +133,6 @@ Summary:        Perl %{name} module
 
 Requires:       perl
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-BuildRequires:  perl-devel
 BuildRequires:  perl(ExtUtils::MakeMaker)
 BuildRequires:  perl(Test)
 
@@ -421,7 +418,7 @@ fi
 %license %{upstream_name}-user/COPYING
 %doc %{upstream_name}-user/language/guile/README
 
-%{_libdir}/*-guile*.so
+%{_libdir}/*-guile*.so*
 %{guile_site}/*.scm
 %endif
 
@@ -432,7 +429,7 @@ fi
 
 %license %{upstream_name}-user/COPYING
 
-%{php_extdir}/*.so
+%{php_extdir}/*.so*
 %endif
 
 
@@ -442,8 +439,14 @@ fi
 
 %license %{upstream_name}-user/COPYING
 %doc %{upstream_name}-user/language/python/README
+%{python3_sitearch}/Gpib.py
+%{python3_sitearch}/__pycache__/Gpib.cpython-*.pyc
+%{python3_sitearch}/gpib-1.0.dist-info/INSTALLER
+%{python3_sitearch}/gpib-1.0.dist-info/METADATA
+%{python3_sitearch}/gpib-1.0.dist-info/WHEEL
+%{python3_sitearch}/gpib-1.0.dist-info/top_level.txt
+%{python3_sitearch}/gpib.cpython-*-linux-gnu.so
 
-%{python3_sitearch}/*
 %endif
 
 
@@ -488,6 +491,10 @@ fi
 
 
 %changelog
+* Mon Mar 16 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
+- 8280576f08fe27e83e3e34a68d6cdb67882b9f94 update PHP
+* Sat Mar 14 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
+- 1710744d4d3eb7714d235bda35d63c9fc7d2f58e
 * Fri Mar 06 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
 - 1710744d4d3eb7714d235bda35d63c9fc7d2f58e
 * Fri Feb 06 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
