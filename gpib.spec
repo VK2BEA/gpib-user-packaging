@@ -7,8 +7,8 @@
 %bcond_without tcl
 
 # https://sourceforge.net/p/linux-gpib/git/ci/eeb0307df9e2b53b17e488bac720e5139040b453/tree/
-%global gitrev 8280576f08fe27e83e3e34a68d6cdb67882b9f94
-%global gitdate 20260316
+%global gitrev d92a313dac2394450806f444aa48ee6af0ba35ec
+%global gitdate 20260412
 
 %global _hardened_build 1
 
@@ -27,7 +27,7 @@
 
 Name:           gpib
 Version:        4.3.7
-Release:        107%{?dist}
+Release:        110%{?dist}
 Summary:        Linux GPIB (IEEE-488) userspace library and programs
 
 License:        GPL-2.0-or-later
@@ -49,6 +49,7 @@ Source3:        %{name}-config-systemd
 
 # We package our own udev rules and firmware loader
 Patch0:         %{name}-remove-usb-autotools.patch
+Patch1:         %{name}-guile.patch
 
 Requires(post):   /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
@@ -188,6 +189,7 @@ HTML and PDF documentation for %{name}.
 %setup -q -n %{upstream_name}-git-%{gitrev}
 
 %patch 0 -p1
+%patch 1 -p1
 
 %build
 pushd %{upstream_name}-user
@@ -321,7 +323,7 @@ find %{buildroot} -name '.gitignore' -delete
 find %{buildroot} -name '.cache.mk' -delete
 
 # ... and static libraries for language bindings
-%{?with_guile:rm -f %{buildroot}%{_libdir}/*-guile.a}
+%{?with_guile:rm -f %{buildroot}%{_libdir}/guile/1.8/extensions/*-guile.a}
 %{?with_tcl:rm -f %{buildroot}%{tcl_sitearch}/%{name}/*_tcl.a}
 
 # ... and .packlist for EPEL7 package
@@ -347,6 +349,10 @@ popd
 %systemd_postun %{name}-config@.service
 %{?ldconfig}
 
+# The autotools setup creates the soft link but this should
+# only appear in the devel package
+rm %{_libdir}/lib%{name}.so
+
 # and ldconfig
 %ldconfig_scriptlets devel
 
@@ -357,7 +363,7 @@ popd
 %{?ldconfig}
 udevadm control --reload > /dev/null 2>&1 || :
 
-# 'remove' or 'purge' are the possible names for deb packages.
+# 'remove' or 'purge' are the possible names for foreign packages.
 if [ "$1" = "0" -o "$1" = "remove" -o "$1" = "purge" ] ; then
     %{?ldconfig}
     udevadm control --reload > /dev/null 2>&1 || :
@@ -418,7 +424,7 @@ fi
 %license %{upstream_name}-user/COPYING
 %doc %{upstream_name}-user/language/guile/README
 
-%{_libdir}/*-guile*.so*
+%{_libdir}/guile/1.8/extensions/*-guile*.so*
 %{guile_site}/*.scm
 %endif
 
@@ -491,6 +497,10 @@ fi
 
 
 %changelog
+* Sun Apr 12 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
+- d92a313dac2394450806f444aa48ee6af0ba35ec
+* Thu Mar 26 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
+- 2f0e347ed478d74e08e3f61f268d0d5c49266bb4
 * Mon Mar 16 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
 - 8280576f08fe27e83e3e34a68d6cdb67882b9f94 update PHP
 * Sat Mar 14 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
