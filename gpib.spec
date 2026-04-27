@@ -7,8 +7,8 @@
 %bcond_without tcl
 
 # https://sourceforge.net/p/linux-gpib/git/ci/eeb0307df9e2b53b17e488bac720e5139040b453/tree/
-%global gitrev d92a313dac2394450806f444aa48ee6af0ba35ec
-%global gitdate 20260412
+%global gitrev 3232ba5a941de3ddb5ad324943b5e2b663d4767b
+%global gitdate 20260427
 
 %global _hardened_build 1
 
@@ -27,7 +27,7 @@
 
 Name:           gpib
 Version:        4.3.7
-Release:        110%{?dist}
+Release:        111%{?dist}
 Summary:        Linux GPIB (IEEE-488) userspace library and programs
 
 License:        GPL-2.0-or-later
@@ -497,6 +497,8 @@ fi
 
 
 %changelog
+* Sun Apr 12 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
+- 3232ba5a941de3ddb5ad324943b5e2b663d4767b
 * Sun Apr 12 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
 - d92a313dac2394450806f444aa48ee6af0ba35ec
 * Thu Mar 26 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
