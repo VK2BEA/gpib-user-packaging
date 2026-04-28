@@ -351,7 +351,9 @@ popd
 
 # The autotools setup creates the soft link but this should
 # only appear in the devel package
-rm %{_libdir}/lib%{name}.so
+#if [ ! -d "/usr/include/gpib" ]; then
+#  rm %{_libdir}/lib%{name}.so
+#fi
 
 # and ldconfig
 %ldconfig_scriptlets devel
