@@ -1,4 +1,4 @@
-# https://sourceforge.net/p/linux-gpib/git/ci/eeb0307df9e2b53b17e488bac720e5139040b453/tree/
+# https://sourceforge.net/p/linux-gpib/git/ci/2b4cefbc91fd1523aff825fe6e958be112bc8645/tree/
 %global gitrev 2b4cefbc91fd1523aff825fe6e958be112bc8645
 %global gitdate 20260430
 
@@ -20,7 +20,7 @@ URL:            http://linux-gpib.sourceforge.net/
 
 %global upstream_name linux-%{name}
 
-Source0:        https://sourceforge.net/code-snapshots/git/l/li/%{upstream_name}/git.git/%{upstream_name}-git-%{gitrev}.zip
+Source0:        %{upstream_name}-git-2b4cefbc91fd1523aff825fe6e958be112bc8645.zip
 Source1:        60-%{name}-adapter.rules
 Source2:        %{name}-config@.service.in
 Source3:        %{name}-config-systemd
