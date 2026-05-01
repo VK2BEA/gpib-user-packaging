@@ -1,48 +1,26 @@
-# Conditional build with a command line option - (the default condition is the opposite)
-%bcond_without guile
-%bcond_without docs
-%bcond_without perl
-%bcond_without php
-%bcond_without python3
-%bcond_without tcl
-
 # https://sourceforge.net/p/linux-gpib/git/ci/eeb0307df9e2b53b17e488bac720e5139040b453/tree/
-%global gitrev 3232ba5a941de3ddb5ad324943b5e2b663d4767b
-%global gitdate 20260427
+%global gitrev 2b4cefbc91fd1523aff825fe6e958be112bc8645
+%global gitdate 20260430
+
+%global soversion 0
 
 %global _hardened_build 1
 
-%{?with_guile:%global guile_site %{_datadir}/guile/site}
+%global guile_site %{_datadir}/guile/site
 
-%{?with_perl:%global perlname LinuxGpib}
-
-%if %{with tcl}
-    # this is hacky, since the copr buildroot doesn't currently provide tclsh
-    # adapted from <https://src.fedoraproject.org/rpms/tcl-togl/blob/master/f/tcl-togl.spec> 
-    %global tcl_version_default \
-        %((rpm -q --qf '%%{VERSION}\\n' tcl-devel | tail -1 | cut -c 1-3))
-    %{!?tcl_version: %global tcl_version %((echo '%{tcl_version_default}'; echo 'puts $tcl_version' | tclsh 2>/dev/null) | tail -1)}
-    %{!?tcl_sitearch: %global tcl_sitearch %{_libdir}/tcl%{tcl_version}}
-%endif
+%global perlname LinuxGpib
 
 Name:           gpib
-Version:        4.3.7
-Release:        111%{?dist}
+Version:        4.3.7^%{gitdate}%(expr substr "%{gitrev}" 1 7)
+Release:        %autorelease
 Summary:        Linux GPIB (IEEE-488) userspace library and programs
 
-License:        GPL-2.0-or-later
+License:        GPL-3.0-only
 URL:            http://linux-gpib.sourceforge.net/
 
-Obsoletes: linux-%{name} <= %{version}
 %global upstream_name linux-%{name}
 
-# The source for this package was pulled from upstream's vcs. Use the
-# below commands to generate the zip or use the SourceForge website.
-# We use zip instead of tar.gz since that is what is on SourceForge
-#  $ wget https://sourceforge.net/code-snapshots/git/l/li/linux-gpib/git.git/linux-gpib-git-44e3d07dfc6836929d81e808a269e3143054b233.zip
-#  $ git clone https://git.code.sf.net/p/linux-gpib/git linux-gpib-git
-
-Source0:        %{upstream_name}-git-%{gitrev}.zip
+Source0:        https://sourceforge.net/code-snapshots/git/l/li/%{upstream_name}/git.git/%{upstream_name}-git-%{gitrev}.zip
 Source1:        60-%{name}-adapter.rules
 Source2:        %{name}-config@.service.in
 Source3:        %{name}-config-systemd
@@ -66,7 +44,6 @@ BuildRequires:  bison
 
 BuildRequires:  libxslt
 BuildRequires:  python3-setuptools
-BuildRequires:  pyproject-rpm-macros
 BuildRequires:  python3-pip
 BuildRequires:  perl
 BuildRequires:  docbook5-style-xsl
@@ -82,7 +59,6 @@ BuildRequires:  docbook-utils
 %{?systemd_requires}
 BuildRequires:  systemd
 
-
 %description
 The Linux GPIB package provides support for GPIB (IEEE-488) hardware.
 This packages contains the userspace libraries and programs.
@@ -93,12 +69,9 @@ Summary:        Development files for %{name}
 
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-Obsoletes: linux-%{name}-devel <= %{version}
-
 %description devel
 Development files for %{name}.
 
-%if %{with guile}
 %package -n guile18-%{name}
 Summary:        Guile %{name} module
 
@@ -106,28 +79,19 @@ Requires:       compat-guile18%{?_isa}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildRequires:  compat-guile18-devel
 
-Obsoletes: guile18-linux-%{name} <= %{version}
-
 %description -n guile18-%{name}
 Guile bindings for %{name}.
-%endif
 
 
-%if %{with php}
 %package -n php-%{name}
 Summary:        PHP %{name} module
 
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildRequires:  php-devel
 
-Obsoletes: php-linux-%{name} <= %{version}
-
 %description -n php-%{name}
 PHP bindings for %{name}.
-%endif
 
-
-%if %{with perl}
 
 %package -n perl-%{perlname}
 Summary:        Perl %{name} module
@@ -139,69 +103,57 @@ BuildRequires:  perl(Test)
 
 %description -n perl-%{perlname}
 Perl bindings for %{name}.
-%endif
 
-%if %{with python3}
-%package -n python%{python3_pkgversion}-%{name}
+
+%package -n python3-%{name}
 Summary:        Python 3 %{name} module
 
-%{?python_provide:%python_provide python%{python3_pkgversion}-%{name}}
+%{?python_provide:%python_provide python3-%{name}}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-BuildRequires:  python%{python3_pkgversion}-devel
+BuildRequires:  python3-devel
 
-Obsoletes: python%{python3_pkgversion}-linux-%{name} <= %{version}
-
-%description -n python%{python3_pkgversion}-%{name}
+%description -n python3-%{name}
 Python 3 bindings for %{name}.
-%endif
 
 
-%if %{with tcl}
 %package -n tcl-%{name}
 Summary:        TCL %{name} module
+
+%global tcl_version_default \
+        %((rpm -q --qf '%%{VERSION}\\n' tcl-devel | tail -1 | cut -c 1-3))
+%{!?tcl_version: %global tcl_version %((echo '%{tcl_version_default}'; echo 'puts $tcl_version' | tclsh 2>/dev/null) | tail -1)}
+%{!?tcl_sitearch: %global tcl_sitearch %{_libdir}/tcl%{tcl_version}}
 
 Requires:       tcl(abi) = %{tcl_version}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 BuildRequires:  tcl-devel
-
-Obsoletes: tcl-linux-%{name} <= %{version}
+BuildRequires:  tcl
 
 %description -n tcl-%{name}
 TCL bindings for %{name}.
-%endif
 
 
-%if %{with docs}
 %package doc
 Summary:        Documentation for %{name} library
 
 BuildArch:      noarch
 Requires:       %{name} = %{version}-%{release}
 
-Obsoletes: linux-%{name}-doc <= %{version}
-
 %description doc
 HTML and PDF documentation for %{name}.
-%endif
-
 
 %prep
 %setup -q -n %{upstream_name}-git-%{gitrev}
-
-%patch 0 -p1
-%patch 1 -p1
+%autopatch -p1 -v
 
 %build
 pushd %{upstream_name}-user
-touch ChangeLog
-autoreconf -vif
+  touch ChangeLog
+  autoreconf -vif
 
-# we make the docs, and the Perl and Python bindings in the spec, 
-# not the library's Makefile (see the docs section below)
-%configure \
-    %{!?with_guile:--disable-guile18-binding} \
-    %{!?with_php:--disable-php-binding} \
-    %{!?with_tcl:--disable-tcl-binding} \
+  # we make the docs, and the Perl and Python bindings in the spec, 
+  # not the library's Makefile (see the docs section below)
+  %configure \
     --disable-documentation \
     --disable-html-docs \
     --disable-manpages \
@@ -210,71 +162,65 @@ autoreconf -vif
     --disable-static \
     --sbindir=%{_sbindir} YACC=bison 
 
-%make_build
+  %make_build
 
-pushd language
-%if %{with perl}
+  pushd language
     %{__make} perl/Makefile.PL
 
     pushd perl
-    %{__perl} Makefile.PL INSTALLDIRS=vendor NO_PACKLIST=1 OPTIMIZE="%{optflags}"
-    %make_build
+      %{__perl} Makefile.PL INSTALLDIRS=vendor NO_PACKLIST=1 OPTIMIZE="%{optflags}"
+      %make_build
     popd
-%endif
 
-pushd python
-%{?with_python3:%pyproject_wheel}
-popd
-popd # language
+    pushd python
+      %pyproject_wheel
+    popd
+  popd # language
 popd # %%{name}-user
-
 
 %install
 # build directory tree
 install -d %{buildroot}%{_docdir}/%{name}
 install -d %{buildroot}%{_mandir}/{man1,man3,man5,man8,mann}
 
-%{?with_guile:install -d %{buildroot}%{guile_site}}
-%{?with_tcl:install -d %{buildroot}%{tcl_sitearch}/%{name}}
+install -d %{buildroot}%{guile_site}
+install -d %{buildroot}%{tcl_sitearch}/%{name}
 
 # userspace
 pushd %{upstream_name}-user
-%make_install
+  %make_install
 
-pushd language
-pushd guile
-%{?with_guile:install -p -m 0644 gpib.scm %{buildroot}%{guile_site}}
-popd
+  pushd language
+    pushd guile
+      install -p -m 0644 gpib.scm %{buildroot}%{guile_site}
+    popd
 
-pushd perl
-%{?with_perl:%{__make} pure_install DESTDIR=%{buildroot}}
-popd
+    pushd perl
+      %{__make} pure_install DESTDIR=%{buildroot}
+    popd
 
-pushd python
-%{?with_python3:%pyproject_install}
-popd
+    pushd python
+      %pyproject_install
+    popd
 
-pushd tcl
-%if %{with tcl}
-    mv %{buildroot}%{_libdir}/*_tcl* %{buildroot}%{tcl_sitearch}/%{name}
-    install -p -m 0644 gpib.n %{buildroot}%{_mandir}/mann
-%endif
-popd
-popd # language
+    pushd tcl
+      mv %{buildroot}%{_libdir}/*_tcl* %{buildroot}%{tcl_sitearch}/%{name}
+      install -p -m 0644 gpib.n %{buildroot}%{_mandir}/mann
+    popd
+  popd # language
 
-pushd doc
-echo '<phrase xmlns="http://docbook.org/ns/docbook" version="5.0">%{version}</phrase>' > %{name}-version.xml
-echo %{version} > gpib_version.txt;
-osx -x no-expand-internal -x no-internal-decl -x preserve-case %{upstream_name}.sgml > %{name}.xml
-     xsltproc --param man.authors.section.enabled 0 \
+  pushd doc
+    echo '<phrase xmlns="http://docbook.org/ns/docbook" version="5.0">%{version}</phrase>' > %{name}-version.xml
+    echo %{version} > gpib_version.txt;
+    osx -x no-expand-internal -x no-internal-decl -x preserve-case %{upstream_name}.sgml > %{name}.xml
+      xsltproc --param man.authors.section.enabled 0 \
               --param man.output.in.separate.dir 1 \
               %{_datadir}/sgml/docbook/xsl-ns-stylesheets/manpages/docbook.xsl \
               %{name}.xml
-for mandir in man1 man3 man5 man8 ; do
-    install -p -m 0644 man/$mandir/* %{buildroot}%{_mandir}/$mandir
-done
+    for mandir in man1 man3 man5 man8 ; do
+      install -p -m 0644 man/$mandir/* %{buildroot}%{_mandir}/$mandir
+    done
 
-%if %{with docs}
     dblatex %{upstream_name}.sgml -F sgml -P table.in.float=none -o %{name}.pdf
         xsltproc --param generate.revhistory.link 1 \
              --param generate.section.toc.level 2 \
@@ -295,44 +241,30 @@ done
 
     install -d %{buildroot}%{_docdir}/%{name}/html
     install -p -m 0644 doc_html/* %{buildroot}%{_docdir}/%{name}/html
-%endif
-popd # doc
+  popd # doc
 
 # udev rules
-install -d %{buildroot}%{_udevrulesdir}
-install -p -m 0644 %{SOURCE1} %{buildroot}%{_udevrulesdir}
+  install -d %{buildroot}%{_udevrulesdir}
+  install -p -m 0644 %{SOURCE1} %{buildroot}%{_udevrulesdir}
 
 # systemd config unit
-install -d %{buildroot}%{_unitdir}
-sed -e 's|@libexecdir@|%{_libexecdir}|g' %{SOURCE2} > %{name}-config@.service
-install -p -m 0644 %{name}-config@.service %{buildroot}%{_unitdir}
+  install -d %{buildroot}%{_unitdir}
+  sed -e 's|@libexecdir@|%{_libexecdir}|g' %{SOURCE2} > %{name}-config@.service
+  install -p -m 0644 %{name}-config@.service %{buildroot}%{_unitdir}
 
 # systemd config script
-install -d %{buildroot}%{_libexecdir}
-install -p -m 0755 %{SOURCE3} %{buildroot}%{_libexecdir}
+  install -d %{buildroot}%{_libexecdir}
+  install -p -m 0755 %{SOURCE3} %{buildroot}%{_libexecdir}
 popd # %%{name}-user
 
 # Cleanup
-# remove libtool stuff
-find %{buildroot} -name '*.la' -delete
-
-# remove .gitignore
-find %{buildroot} -name '.gitignore' -delete
-
-# ... and automake caches `make dist` didn't get rid of
-find %{buildroot} -name '.cache.mk' -delete
-
 # ... and static libraries for language bindings
-%{?with_guile:rm -f %{buildroot}%{_libdir}/guile/1.8/extensions/*-guile.a}
-%{?with_tcl:rm -f %{buildroot}%{tcl_sitearch}/%{name}/*_tcl.a}
-
-# ... and .packlist for EPEL7 package
-%{?with_perl:find %{buildroot} -type f -name '*.packlist' -delete}
-
+rm -f %{buildroot}%{_libdir}/guile/1.8/extensions/*-guile.a
+rm -f %{buildroot}%{tcl_sitearch}/%{name}/*_tcl.a
 
 %check
 pushd %{upstream_name}-user/language/perl
-%{?with_perl:%{__make} test LD_LIBRARY_PATH=%{buildroot}%{_libdir}}
+  %{__make} test LD_LIBRARY_PATH=%{buildroot}%{_libdir}
 popd
 
 # Post-install stuff
@@ -349,20 +281,6 @@ popd
 %systemd_postun %{name}-config@.service
 %{?ldconfig}
 
-# The autotools setup creates the soft link but this should
-# only appear in the devel package
-#if [ ! -d "/usr/include/gpib" ]; then
-#  rm %{_libdir}/lib%{name}.so
-#fi
-
-# and ldconfig
-%ldconfig_scriptlets devel
-
-%{?with_guile:%ldconfig_scriptlets -n guile18-%{name}}
-
-%{?with_tcl:%ldconfig_scriptlets -n tcl-%{name}}
-
-%{?ldconfig}
 udevadm control --reload > /dev/null 2>&1 || :
 
 # 'remove' or 'purge' are the possible names for foreign packages.
@@ -390,7 +308,8 @@ fi
 %{_mandir}/man5/*
 %{_mandir}/man8/*
 
-%{_libdir}/libgpib.so.*
+%{_libdir}/libgpib.so.%{soversion}
+%{_libdir}/libgpib.so.%{soversion}.*
 
 %config(noreplace) %{_sysconfdir}/gpib.conf
 
@@ -414,12 +333,9 @@ fi
 
 %{_mandir}/man3/*.3*
 
-%if %{with perl}
 %exclude %{_mandir}/man3/*.3pm*
-%endif
 
 
-%if %{with guile}
 %files -n guile18-%{name}
 %defattr(644,root,root,755)
 
@@ -428,21 +344,17 @@ fi
 
 %{_libdir}/guile/1.8/extensions/*-guile*.so*
 %{guile_site}/*.scm
-%endif
 
 
-%if %{with php}
 %files -n php-%{name}
 %defattr(644,root,root,755)
 
 %license %{upstream_name}-user/COPYING
 
 %{php_extdir}/*.so*
-%endif
 
 
-%if %{with python3}
-%files -n python%{python3_pkgversion}-%{name}
+%files -n python3-%{name}
 %defattr(644,root,root,755)
 
 %license %{upstream_name}-user/COPYING
@@ -455,10 +367,7 @@ fi
 %{python3_sitearch}/gpib-1.0.dist-info/top_level.txt
 %{python3_sitearch}/gpib.cpython-*-linux-gnu.so
 
-%endif
 
-
-%if %{with perl}
 %files -n perl-%{perlname}
 %defattr(644,root,root,755)
 
@@ -472,10 +381,8 @@ fi
 %{perl_vendorarch}/auto/%{perlname}/autosplit.ix
 
 %{_mandir}/man3/*.3pm*
-%endif
 
 
-%if %{with tcl}
 %files -n tcl-%{name}
 %defattr(644,root,root,755)
 
@@ -485,38 +392,16 @@ fi
 %{tcl_sitearch}/%{name}
 
 %{_mandir}/mann/gpib.n*
-%endif
 
 
-%if %{with docs}
 %files doc
 %defattr(644,root,root,755)
 
 %license %{upstream_name}-user/COPYING
 
 %{_docdir}/%{name}
-%endif
 
 
 %changelog
-* Sun Apr 12 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
-- 3232ba5a941de3ddb5ad324943b5e2b663d4767b
-* Sun Apr 12 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
-- d92a313dac2394450806f444aa48ee6af0ba35ec
-* Thu Mar 26 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
-- 2f0e347ed478d74e08e3f61f268d0d5c49266bb4
-* Mon Mar 16 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
-- 8280576f08fe27e83e3e34a68d6cdb67882b9f94 update PHP
-* Sat Mar 14 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
-- 1710744d4d3eb7714d235bda35d63c9fc7d2f58e
-* Fri Mar 06 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
-- 1710744d4d3eb7714d235bda35d63c9fc7d2f58e
-* Fri Feb 06 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
-- 2ed668f7fb87b9498a6515230c95284eaef5756b
-* Thu Jan 29 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
-- Reversion so that perl package replaces the version from gpib repo
-* Wed Jan 21 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
-- e6e13a0f349a3298ee2f689da969efd6e39f96c3 - INES PCI support
-* Sun Jan 11 2026 Michael Katzmann <vk2bea-at-gmail-dot-com>
-- Initial release
+%autochangelog
 
