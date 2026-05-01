@@ -1,0 +1,12 @@
+diff -ruN old/linux-gpib-user/language/guile/Makefile.am new/linux-gpib-user/language/guile/Makefile.am
+--- old/linux-gpib-user/language/guile/Makefile.am	2026-03-27 15:23:53.779854371 -0400
++++ new/linux-gpib-user/language/guile/Makefile.am	2026-03-27 16:18:17.246661877 -0400
+@@ -9,6 +9,8 @@
+ 
+ EXTRA_DIST = gpib.scm test.scm
+ 
++libdir = @libdir@/guile/1.8/extensions
++
+ lib_LTLIBRARIES = libgpib-guile.la
+ 
+ noinst_HEADERS = gpib.h
